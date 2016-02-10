@@ -1,15 +1,21 @@
-
+var juices;
 d3.json("./juice_orders",function(error, data){
 	var list = d3.nest()
 			   .key(function(d){return d.drinkName})
-			   .sortKeys(d3.ascending)
 			   .rollup(function(d){
 			   	return d.reduce(function(a,b){
 			   		return a+b.quantity;
 			   	},0)})
 			   .entries(data);
 
-	console.log("list.......",list);	
+
+	_.remove(list,function(d){
+		return (d.key == 'CTL' || d.key == 'ctl') || d.key == 'Register User';
+	})
+
+	list= _.sortBy(list, 'values').reverse();
+
+	juices = list;	
 
 	var scale = d3.scale.linear()
 					.domain([0,7000])
@@ -38,14 +44,9 @@ d3.json("./juice_orders",function(error, data){
 					.attr('y2', function(d, index){ return (index*15)+10})
 					.style("stroke","red")
 					.style("stroke-width","5");
-
-		// circleGroup.append('circle')
-		// 			.attr("cx",function(d, index){return scale(d.values)})
-		// 			.attr("cy", function(d,index){return (index*15)+5;})
-		// 			.attr("r",5)
-		// 			.style("fill","green");
 									
 })
+
 
 
 
